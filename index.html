@@ -21,6 +21,8 @@
         <button class="nav-link" data-page="calendario"><span>▦</span> Calendário</button>
         <button class="nav-link" data-page="estudos"><span>▤</span> Estudos</button>
         <button class="nav-link" data-page="dinheiro"><span>€</span> Dinheiro</button>
+        <button class="nav-link" data-page="loja"><span>🛍</span> Loja</button>
+        <button class="nav-link" data-page="assistente"><span>✦</span> Assistente</button>
       </nav>
       <div class="sidebar-bottom">
         <div id="sync-status" class="sync-status"><span class="status-dot"></span><span>Modo local</span></div>
@@ -71,12 +73,18 @@
 
       <section id="page-calendario" class="page">
         <div class="section-intro"><div><p class="eyebrow">TEMPO E ORGANIZAÇÃO</p><h2>Calendário e tarefas</h2><p>Guarda testes, compromissos, objetivos e tarefas por concluir.</p></div></div>
-        <div class="content-grid">
+        <article class="panel calendar-panel">
+          <div class="panel-heading calendar-toolbar"><button class="button button-quiet" id="calendar-prev" type="button" aria-label="Mês anterior">←</button><div><h2 id="calendar-month-title">Calendário</h2><p class="muted">Seleciona um dia para criar um evento.</p></div><button class="button button-quiet" id="calendar-next" type="button" aria-label="Mês seguinte">→</button><button class="button button-secondary" id="calendar-today" type="button">Hoje</button></div>
+          <div class="calendar-weekdays"><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span></div>
+          <div id="calendar-grid" class="calendar-grid" aria-label="Calendário mensal"></div>
+          <div class="calendar-legend"><span><i class="legend-dot workout-dot"></i>Treinos</span><span><i class="legend-dot study-dot"></i>Estudos</span><span><i class="legend-dot task-dot"></i>Tarefas/pessoal</span></div>
+        </article>
+        <div class="content-grid margin-top">
           <article class="panel"><div class="panel-heading"><h2>Adicionar evento ou tarefa</h2></div>
             <form id="event-form" class="form-stack">
               <label>Título<input name="title" required maxlength="140" placeholder="Ex.: Estudar para o teste"></label>
               <div class="form-row"><label>Data<input name="date" type="date" required></label><label>Hora (opcional)<input name="time" type="time"></label></div>
-              <label>Categoria<select name="category"><option>Pessoal</option><option>Estudos</option><option>Treinos</option><option>Dinheiro</option></select></label>
+              <label>Categoria<select name="category"><option>Pessoal</option><option>Estudos</option><option>Treinos</option><option>Dinheiro</option><option>Tarefas</option></select></label>
               <label>Notas<textarea name="notes" rows="2" maxlength="1000" placeholder="Detalhes opcionais"></textarea></label>
               <button class="button button-primary" type="submit">Adicionar ao calendário</button>
             </form>
@@ -131,7 +139,54 @@
         <article class="panel margin-top"><div class="panel-heading"><h2>Movimentos recentes</h2></div><div id="money-list" class="item-list empty-state">Ainda não tens movimentos registados.</div></article>
         <p class="privacy-note">Esta área é para controlo pessoal. Não guardes palavras-passe bancárias, números completos de cartões ou credenciais financeiras.</p>
       </section>
-      <footer class="footer">Meu Espaço <span>•</span> Organiza o que importa.</footer>
+
+      <section id="page-loja" class="page">
+        <div class="section-intro"><div><p class="eyebrow">COMPRAS COM PLANEAMENTO</p><h2>A minha loja</h2><p>Guarda produtos que queres comprar, compara o total com o teu orçamento e abre lojas externas para comprar. O Meu Espaço não processa pagamentos.</p></div></div>
+        <article class="panel shop-catalog-panel">
+          <div class="panel-heading"><div><h2>Produtos sugeridos</h2><p class="muted">Exemplos para começares. Confirma sempre o preço e a disponibilidade na loja.</p></div></div>
+          <div class="shop-catalog-grid">
+            <article class="shop-product-card"><div class="shop-product-icon">🏋️</div><p class="eyebrow">TREINO</p><h3>Tapete de exercício</h3><p class="shop-product-price">19,99 € <span>preço indicativo</span></p><div class="shop-product-actions"><a class="button button-quiet" href="https://www.decathlon.pt/search?Ntt=tapete%20fitness" target="_blank" rel="noopener noreferrer">Ver na Decathlon ↗</a><button class="button button-primary" type="button" data-catalog-add="Tapete de exercício" data-catalog-price="19.99" data-catalog-category="Treino" data-catalog-url="https://www.decathlon.pt/search?Ntt=tapete%20fitness">Adicionar</button></div></article>
+            <article class="shop-product-card"><div class="shop-product-icon">🎧</div><p class="eyebrow">TECNOLOGIA</p><h3>Auscultadores</h3><p class="shop-product-price">29,99 € <span>preço indicativo</span></p><div class="shop-product-actions"><a class="button button-quiet" href="https://www.amazon.es/s?k=auriculares" target="_blank" rel="noopener noreferrer">Ver na Amazon ↗</a><button class="button button-primary" type="button" data-catalog-add="Auscultadores" data-catalog-price="29.99" data-catalog-category="Tecnologia" data-catalog-url="https://www.amazon.es/s?k=auriculares">Adicionar</button></div></article>
+            <article class="shop-product-card"><div class="shop-product-icon">📚</div><p class="eyebrow">ESTUDOS</p><h3>Caderno de estudo</h3><p class="shop-product-price">4,99 € <span>preço indicativo</span></p><div class="shop-product-actions"><a class="button button-quiet" href="https://www.amazon.es/s?k=cuaderno" target="_blank" rel="noopener noreferrer">Ver na Amazon ↗</a><button class="button button-primary" type="button" data-catalog-add="Caderno de estudo" data-catalog-price="4.99" data-catalog-category="Estudos" data-catalog-url="https://www.amazon.es/s?k=cuaderno">Adicionar</button></div></article>
+            <article class="shop-product-card"><div class="shop-product-icon">👟</div><p class="eyebrow">ROUPA</p><h3>Ténis de treino</h3><p class="shop-product-price">39,99 € <span>preço indicativo</span></p><div class="shop-product-actions"><a class="button button-quiet" href="https://www.decathlon.pt/search?Ntt=tenis%20fitness" target="_blank" rel="noopener noreferrer">Ver na Decathlon ↗</a><button class="button button-primary" type="button" data-catalog-add="Ténis de treino" data-catalog-price="39.99" data-catalog-category="Roupa" data-catalog-url="https://www.decathlon.pt/search?Ntt=tenis%20fitness">Adicionar</button></div></article>
+          </div>
+        </article>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-icon green">€</div><p>Orçamento definido</p><strong id="shop-budget">0,00 €</strong><small>Configurado em Dinheiro</small></article>
+          <article class="stat-card"><div class="stat-icon blue">🛒</div><p>Lista de compras</p><strong id="shop-total">0,00 €</strong><small id="shop-count">0 produtos guardados</small></article>
+          <article class="stat-card"><div class="stat-icon yellow">◎</div><p>Restante após lista</p><strong id="shop-remaining">0,00 €</strong><small>Estimativa, não uma transação</small></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel"><div class="panel-heading"><h2>Adicionar produto</h2></div>
+            <form id="shop-form" class="form-stack">
+              <label>Nome do produto<input name="name" required maxlength="120" placeholder="Ex.: Auscultadores"></label>
+              <label>Preço estimado (€)<input name="price" type="number" min="0.01" max="1000000" step="0.01" required placeholder="49,99"></label>
+              <label>Categoria<select name="category"><option>Geral</option><option>Treino</option><option>Estudos</option><option>Tecnologia</option><option>Roupa</option><option>Casa</option></select></label>
+              <label>Link da loja (opcional)<input name="url" type="url" placeholder="https://loja.pt/produto"></label>
+              <label>Notas (opcional)<input name="notes" maxlength="240" placeholder="Tamanho, modelo, prioridade…"></label>
+              <button class="button button-primary" type="submit">Guardar na minha lista</button>
+            </form>
+          </article>
+          <article class="panel"><div class="panel-heading"><h2>Encontrar produtos reais</h2></div><p class="muted">Pesquisa em lojas externas. Os preços e a disponibilidade devem ser confirmados no site da loja.</p>
+            <form id="shop-search-form" class="form-stack"><label>O que procuras?<input name="query" required maxlength="120" placeholder="Ex.: ténis de corrida"></label><button class="button button-secondary" type="submit">Pesquisar na Web</button></form>
+            <div class="shop-search-links"><a id="shop-google" class="button button-quiet" href="https://www.google.com/shopping" target="_blank" rel="noopener noreferrer">Google Shopping ↗</a><a id="shop-amazon" class="button button-quiet" href="https://www.amazon.es/" target="_blank" rel="noopener noreferrer">Amazon Espanha ↗</a></div>
+            <p class="privacy-note">Os links abrem sites externos. Não há compras nem pagamentos dentro do Meu Espaço.</p>
+          </article>
+        </div>
+        <article class="panel margin-top"><div class="panel-heading"><h2>Lista de desejos e compras planeadas</h2><span class="muted small">Ainda não são despesas reais</span></div><div id="shop-list" class="item-list empty-state">Ainda não guardaste produtos.</div></article>
+      </section>
+
+      <section id="page-assistente" class="page">
+        <div class="section-intro"><div><p class="eyebrow">AJUDA LOCAL E GRATUITA</p><h2>Assistente pessoal</h2><p>Um assistente simples que funciona no teu navegador, sem API paga. Usa os teus registos atuais para dar resumos e preparar eventos.</p></div></div>
+        <article class="panel assistant-panel">
+          <div class="assistant-notice">Este assistente usa regras locais, não um modelo de IA avançado. As mensagens não são enviadas para um serviço externo.</div>
+          <div id="assistant-chat" class="assistant-chat" aria-live="polite"><div class="assistant-message assistant-bot">Olá! Posso resumir a tua semana, consultar os teus registos ou preparar um evento para o calendário. Experimenta: “marca treino amanhã às 18h”.</div></div>
+          <div class="assistant-suggestions"><button type="button" class="button button-quiet" data-assistant-prompt="Faz um resumo dos meus dados">Resumo dos meus dados</button><button type="button" class="button button-quiet" data-assistant-prompt="Ajuda-me a organizar a semana">Organizar a semana</button><button type="button" class="button button-quiet" data-assistant-prompt="Como está o meu orçamento?">Ver orçamento</button></div>
+          <form id="assistant-form" class="assistant-compose"><input id="assistant-input" maxlength="500" placeholder="Escreve um pedido…" aria-label="Mensagem para o assistente" required><button class="button button-primary" type="submit">Enviar</button></form>
+          <div id="assistant-pending" class="assistant-pending" hidden></div>
+        </article>
+      </section>
+<footer class="footer">Meu Espaço <span>•</span> Organiza o que importa.</footer>
     </main>
   </div>
 
