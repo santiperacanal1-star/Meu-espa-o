@@ -33,3 +33,12 @@ A aba Loja permite guardar produtos manualmente com preço estimado, categoria, 
 
 ## Correção da Loja
 A aba Loja inclui agora cartões de produtos de exemplo com preços indicativos, links de pesquisa em lojas externas e botão Adicionar à lista. Os preços não são verificados em tempo real; confirma o preço final, portes e disponibilidade na loja. O botão Adicionar guarda o item na lista pessoal e atualiza a estimativa do orçamento. Não há checkout nem pagamentos dentro do site.
+
+
+## Melhorias de nuvem, cópias de segurança e painel
+- O painel inicial inclui um resumo automático dos eventos, tarefas, treinos, estudo e saldo, calculado localmente sem IA paga.
+- Em Início, usa **Exportar cópia** para descarregar um ficheiro JSON dos teus registos. Usa **Importar cópia** para restaurar; a importação substitui os dados atuais, por isso exporta primeiro.
+- A configuração Supabase é guardada no navegador antes de testar a ligação, para evitar voltar a introduzir URL/chave se a ligação falhar temporariamente.
+- O calendário já suporta vistas de mês, semana e dia, seleção de data e ligação automática de treinos/sessões de estudo aos eventos.
+- GitHub Pages suporta apenas o site estático. A sincronização na nuvem usa Supabase e exige a tabela `user_data`, políticas RLS corretas e início de sessão.
+- A chave pública/anon do Supabase pode ser usada no navegador com RLS bem configurado; nunca uses `service_role`.

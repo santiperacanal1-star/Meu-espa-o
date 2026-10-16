@@ -65,6 +65,47 @@
       grid.className="calendar-agenda";grid.innerHTML=items.join("");
     }
   }
+  function renderSmartSummary() {
+    const target = $("#smart-summary");
+    if (!target) return;
+    const todayStr = dateISO();
+    const todayEvents = data.events.filter(e => e.date === todayStr && !e.done).sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+    const next = data.events.filter(e => e.date >= todayStr && !e.done).sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||""))).slice(0,3);
+    const income = data.money.filter(m=>m.type==="income").reduce((s,m)=>s+(Number(m.amount)||0),0);
+    const expenses = data.money.filter(m=>m.type==="expense").reduce((s,m)=>s+(Number(m.amount)||0),0);
+    const studyMinutes = data.studies.reduce((s,x)=>s+(Number(x.minutes)||0),0);
+    const weekEnd = new Date(); weekEnd.setDate(weekEnd.getDate()+7);
+    const weekCount = data.events.filter(e=>e.date>=todayStr && e.date<=dateISO(weekEnd) && !e.done).length;
+    const tasks = todayEvents.length ? `<strong>Hoje:</strong> ${todayEvents.map(e=>`${safe(e.time ? e.time+" " : "")}${safe(e.title)}`).join(" · ")}` : "Hoje não tens tarefas por concluir registadas.";
+    const nextText = next.length ? next.map(e=>`<li><span>${safe(e.date)}${e.time ? " · "+safe(e.time) : ""}</span> ${safe(e.title)}</li>`).join("") : "<li>Sem eventos futuros registados.</li>";
+    target.innerHTML = `<p>${tasks}</p><div class="insight-metrics"><span><strong>${weekCount}</strong><small>compromissos por concluir nos próximos 7 dias</small></span><span><strong>${data.workouts.length}</strong><small>treinos registados</small></span><span><strong>${Math.floor(studyMinutes/60)}h ${studyMinutes%60}m</strong><small>tempo de estudo registado</small></span><span><strong>${euro(income-expenses)}</strong><small>saldo registado</small></span></div><h3>Próximos compromissos</h3><ul>${nextText}</ul><p class="small muted">Sugestão automática: escolhe uma prioridade principal para hoje e reserva pausas entre compromissos. Este resumo usa regras locais, não uma IA externa.</p>`;
+  }
+  function exportBackup() {
+    const payload = { app: "Meu Espaço", version: 1, exportedAt: new Date().toISOString(), data };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `meu-espaco-backup-${dateISO()}.json`;
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    setNotice("Cópia de segurança exportada. Guarda o ficheiro num local privado.");
+  }
+  async function importBackupFile(file) {
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text());
+      const incoming = parsed && parsed.data ? parsed.data : parsed;
+      if (!incoming || typeof incoming !== "object" || !Array.isArray(incoming.events) || !Array.isArray(incoming.workouts) || !Array.isArray(incoming.money)) {
+        throw new Error("O ficheiro não parece ser uma cópia válida do Meu Espaço.");
+      }
+      if (!confirm("Importar esta cópia vai substituir os dados atuais neste Meu Espaço. Exporta primeiro uma cópia dos dados atuais. Continuar?")) return;
+      data = {...initial, ...incoming};
+      saveLocal();
+      render();
+      if (user && supabaseClient) await persist();
+      setNotice("Cópia importada com sucesso.");
+    } catch (err) { setNotice(err.message || "Não foi possível importar o ficheiro."); }
+  }
+
   function render() {
     const tasks=data.events.filter(e=>!e.done).length;
     $("#stat-tasks").textContent=tasks;
@@ -97,6 +138,7 @@
     const shopTotal=(data.shopItems||[]).reduce((sum,p)=>sum+(Number(p.price)||0),0);
     $("#shop-budget").textContent=euro(data.budget); $("#shop-total").textContent=euro(shopTotal); $("#shop-count").textContent=`${(data.shopItems||[]).length} produto(s) guardado(s)`; $("#shop-remaining").textContent=euro(Number(data.budget)-expenses-shopTotal);
     renderCalendar();
+    renderSmartSummary();
   }
   async function persist() {
     saveLocal(); render();
@@ -212,15 +254,25 @@
     data.money.push({id:crypto.randomUUID(),type:"expense",description:`Compra: ${item.name}`,amount:Number(item.price),date:dateISO()});
     data.shopItems=data.shopItems.filter(p=>p.id!==item.id); persist(); setNotice("Compra registada nas despesas. Confirma o valor e a data em Dinheiro.");
   });
-  $("#account-button").addEventListener("click",()=>$("#account-dialog").showModal());
+  $("#export-backup").addEventListener("click", exportBackup);
+  $("#import-backup").addEventListener("click", () => $("#backup-file").click());
+  $("#backup-file").addEventListener("change", e => { importBackupFile(e.target.files?.[0]); e.target.value = ""; });
+  $("#refresh-insights").addEventListener("click", () => { renderSmartSummary(); setNotice("Resumo atualizado com os dados atuais."); });
+  $("#account-button").addEventListener("click",()=>{
+    if(config?.url) $("#config-form").elements.url.value=config.url;
+    if(config?.key) $("#config-form").elements.key.value=config.key;
+    $("#account-dialog").showModal();
+  });
   $("#config-form").addEventListener("submit",async e=>{
     e.preventDefault();const f=formData(e.currentTarget),msg=$("#account-message");
+    const savedConfig={url:f.url.trim().replace(/\/$/, ""),key:f.key.trim()};
+    // Guardar antes do teste de ligação: um erro temporário não deve obrigar a voltar a escrever.
+    localStorage.setItem("meu-espaco-supabase-config",JSON.stringify(savedConfig));
     try {
-      await connect(f.url.trim(),f.key.trim());
-      localStorage.setItem("meu-espaco-supabase-config",JSON.stringify({url:f.url.trim(),key:f.key.trim()}));
-      msg.textContent=user?"Ligação estabelecida. Os dados serão sincronizados.":"Projeto ligado. Clica em «Entrar / criar conta» para autenticar.";
-      setNotice("Configuração da nuvem concluída.");
-    } catch(err){msg.textContent=err.message||"Não foi possível ligar ao Supabase.";setSync("Modo local");}
+      await connect(savedConfig.url,savedConfig.key);
+      msg.textContent=user?"Ligação estabelecida. Os dados serão sincronizados.":"Configuração guardada. Clica em «Entrar / criar conta» para autenticar.";
+      setNotice("Configuração guardada neste navegador.");
+    } catch(err){msg.textContent=(err.message||"Não foi possível ligar ao Supabase.")+" A configuração ficou guardada; podes corrigir os dados e tentar novamente.";setSync("Modo local");}
   });
   $("#sign-in").addEventListener("click",async()=>{
     const msg=$("#account-message");

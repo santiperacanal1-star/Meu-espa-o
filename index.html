@@ -50,6 +50,8 @@
           <article class="stat-card"><div class="stat-icon pink">€</div><p>Saldo registado</p><strong id="stat-balance">0,00 €</strong><small>Receitas menos despesas</small></article>
         </div>
         <div class="content-grid">
+          <article class="panel smart-panel"><div class="panel-heading"><div><p class="eyebrow">PAINEL INTELIGENTE</p><h2>Resumo e prioridades</h2></div><button class="text-button" id="refresh-insights" type="button">Atualizar resumo ↻</button></div><div id="smart-summary" class="smart-summary">A preparar o teu resumo…</div><div class="quick-actions"><button class="button button-secondary" data-go="calendario" type="button">+ Evento</button><button class="button button-secondary" data-go="treinos" type="button">+ Treino</button><button class="button button-secondary" data-go="estudos" type="button">+ Estudo</button><button class="button button-secondary" data-go="dinheiro" type="button">+ Movimento</button></div></article>
+          <article class="panel backup-panel"><div class="panel-heading"><div><p class="eyebrow">OS TEUS DADOS</p><h2>Cópias de segurança</h2></div></div><p class="muted">Exporta uma cópia para guardar no computador ou importa uma cópia anterior.</p><div class="quick-actions"><button class="button button-primary" id="export-backup" type="button">Exportar cópia</button><button class="button button-secondary" id="import-backup" type="button">Importar cópia</button><input id="backup-file" type="file" accept="application/json,.json" hidden></div><p class="small muted">A cópia inclui os teus registos e orçamento. Guarda o ficheiro num local privado.</p></article>
           <article class="panel"><div class="panel-heading"><div><p class="eyebrow">FOCO</p><h2>As minhas tarefas</h2></div><button class="text-button" data-go="calendario">Ver calendário →</button></div><div id="home-tasks" class="item-list empty-state">Ainda não tens tarefas. Adiciona uma na área Calendário.</div></article>
           <article class="panel"><div class="panel-heading"><div><p class="eyebrow">PLANEAMENTO</p><h2>Próximos eventos</h2></div></div><div id="home-events" class="item-list empty-state">Os teus próximos eventos aparecem aqui.</div></article>
         </div>
@@ -201,7 +203,7 @@
     </form>
     <div class="modal-actions"><button id="sign-in" class="button button-secondary" type="button">Entrar / criar conta</button><button id="sign-out" class="button button-quiet" type="button">Terminar sessão</button></div>
     <p id="account-message" class="muted" role="status"></p>
-    <p class="muted small">As credenciais ficam guardadas neste navegador. Para uma instalação pública com configuração centralizada, usa variáveis de ambiente no processo de compilação ou uma configuração segura do alojamento.</p>
+    <p class="muted small">A URL e a chave pública ficam guardadas neste navegador antes de testar a ligação, para não teres de as escrever sempre. Nunca coloques uma chave service_role. A sincronização entre dispositivos exige iniciar sessão na mesma conta.</p>
   </dialog>
 </body>
 </html>
